@@ -1,4 +1,4 @@
-#include "BST.hpp"
+#include "BST.h"
 
 
 bool BST::insert(Node *&node, const std::string &value)
