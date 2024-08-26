@@ -1,8 +1,10 @@
-#pragma once
-#include <string>
-#include <iostream>
+#ifndef BST_H
+#define BST_H
 
-class Node
+#include <malloc.h>
+#include <string>
+
+struct Node
 {
 public:
   std::string value;
@@ -13,7 +15,7 @@ public:
   Node(const std::string &value): value(value), left(nullptr), right(nullptr) {}
 };
 
-class BST
+struct BST
 {
 private:
   Node *root;
@@ -40,3 +42,8 @@ public:
 
   void copy(BST *bstCp) { copy(root, bstCp);};
 };
+
+struct BST *makeBST();
+
+
+#endif
