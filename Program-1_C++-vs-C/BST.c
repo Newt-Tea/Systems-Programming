@@ -1,9 +1,9 @@
 #include "Program-1_C++-vs-C\BST.h"
 
 
-int BST::insert(Node *&node, const std::string &value)
+int insertNode(struct Node ** node, const char *value)
 {
-  if (node == nullptr)
+  if (node == NULL)
     {
       node = new Node(value);
       return 1;
@@ -11,6 +11,12 @@ int BST::insert(Node *&node, const std::string &value)
   if (value < node->value) { return insert(node->left, value);}
   if (value > node->value) { return insert(node->right,value);}
   return 0;
+}
+
+int insert(struct BST *bst, const char *s){
+  if (strcmp((*node)->value,s) < 0){
+    return insertNode(&((*node)->left),s);
+  }
 }
 
 
