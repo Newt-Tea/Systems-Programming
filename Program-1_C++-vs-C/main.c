@@ -1,31 +1,30 @@
-#include "BST.hpp"
-#include <string>
-using std::string;
+#include "BST.h"
+#include <string.h>
 
 int main()
 {
 
-  BST store;
+  BST *store = malloc(1000);
   string word;
 
-  std::cout << "Please enter a series of words to store in a BST" << std::endl;
-  std::cout << "Type 'STOP' to end the series and output the BST" << std::endl;
-  std::cout << "In postorder" << std::endl;
+  printf("Please enter a series of words to store in a BST" );
+  printf("Type 'STOP' to end the series and output the BST" );
+  printf("In postorder");
 
 
   while (1)
     {
-      std::cout << "Word = ";
-      std::cin >> word;
+      printf("Word = ";
+      scanf("%s",word)
       if (word == "STOP") break;
       store.insert(word);
     }
 
-  std::cout << "The BST ouput in postorder is "<< std::endl;
-  store.postOrder(std::cout);
-  std::cout << std::endl;
+  printf("The BST ouput in postorder is ");
+  store.postOrder(cout);
+  printf( );
 
 
-
+ free(store)
   return 1;
 }

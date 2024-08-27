@@ -1,32 +1,32 @@
-#include "BST.h"
+#include "Program-1_C++-vs-C\BST.h"
 
 
-bool BST::insert(Node *&node, const std::string &value)
+int BST::insert(Node *&node, const std::string &value)
 {
   if (node == nullptr)
     {
       node = new Node(value);
-      return true;
+      return 1;
     }
   if (value < node->value) { return insert(node->left, value);}
   if (value > node->value) { return insert(node->right,value);}
-  return false;
+  return 0;
 }
 
 
-bool BST::search(Node *node, const std::string &value)
+int BST::search(Node *node, const std::string &value)
 {
   if (node == nullptr)
     {
-      return false;
+      return 0;
     }
   if (value < node->value) { return search(node->left,value);}
   if (value > node->value) { return search(node->right,value);}
-  return true;
+  return 1;
 }
 bool BST::remove(Node *&node, const std::string &value)
 {
-  return true;
+  return 1;
 }
 
 void BST::postOrder(Node *node, std::ostream &os)
