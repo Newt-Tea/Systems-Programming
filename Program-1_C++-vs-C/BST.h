@@ -1,44 +1,34 @@
 #ifndef BST_H
 #define BST_H
 
-#include <malloc.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 struct Node
 {
-  std::string value;
-  Node *left;
-  Node *right;
-
-
+  char *value;
+  struct Node *left;
+  struct Node *right;
 };
 
-struct Node *makeNode();
-  Node(): left(nullptr), right(nullptr) {}
-  Node(const std::string &value): value(value), left(nullptr), right(nullptr) {}
+void freeNode(struct Node *node);
 
 struct BST
 {
   struct Node *root;
 };
 
+
 struct BST *makeBST();
-BST() : root(nullptr) {}
-  BST( BST &old) { old.copy(this);}
-  ~BST() { dealloc(root);}
+void freeBST(struct BST *bst);
 
-int insert(struct Node ** node, const char *value);
+
+// Definitions
 int insert(struct BST *bst, const char *value);
-
-int search(struct Node ** node, const char *value);
-int search(struct BST *bst, const char *value);
-
-int remove(Node *&node, const std::string &value);
-int remove(const std::string &value);
-
-  void postOrder(Node *node, std::ostream &os);
-  void dealloc(Node *&node);
-  void copy(Node *node, BST *bstCp);
+int search(const struct BST *bst, const char *value);
+void postOrder(const struct BST *bst);
+void printValue(const char *value);
 
 
 #endif
