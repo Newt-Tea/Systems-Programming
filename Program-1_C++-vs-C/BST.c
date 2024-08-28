@@ -136,8 +136,3 @@ void postOrder(const struct BST *bst)
 
     postOrderNode(bst->root);
 }
-// // used to help the postorder function
-// void printValue(const char *value)
-// {
-//     printf("%s ", value);
-// }
