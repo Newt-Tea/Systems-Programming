@@ -20,24 +20,24 @@ int checkError (int val, const char *msg)
 
 
 int main(){
-    const signed char bufferSize = 20;
+    const unsigned char bufferSize = 20;
     
     int fdR = checkError(open("raw.dat",O_RDONLY, 0644),"Failed to open");
     int fdW = checkError(open("data.dat", O_WRONLY | O_CREAT | O_TRUNC, 0644),"Failed to create/write to file");
 
-    signed char buffer[bufferSize];
+    unsigned char buffer[bufferSize];
 
     int pos = 0;
-    signed short low;
-    signed short high;
-    double postShift;
+    unsigned char low;
+    unsigned char high;
+    short postShift;
     double postDiv;
 
     double accell;
     double angular;
     double angle;
 
-    double *accellPTR = malloc(sizeof(double));
+    double *accellPTR =  malloc(sizeof(double));
     double *angularPTR = malloc(sizeof(double));
     double *anglePTR = malloc(sizeof(double));
     while(0 != checkError(read(fdR,buffer,bufferSize),"Failed to read")){
@@ -55,6 +55,9 @@ int main(){
             accell = postDiv*16*9.8;
             angular = postDiv*2000;
             angle = postDiv*180;  
+            accellPTR = &accell;
+            angularPTR = &angular;
+            anglePTR = &angle;
 
             if(k==2){
                 
