@@ -7,9 +7,9 @@
       "request": "launch",
       "args": [],
       "stopAtEntry": false,
-      "externalConsole": true,
-      "cwd": "c:/Users/hudso_oe92y11/OneDrive/Documents/GitHub/Systems-Programming/Program-1_C++-vs-C",
-      "program": "c:/Users/hudso_oe92y11/OneDrive/Documents/GitHub/Systems-Programming/Program-1_C++-vs-C/build/Debug/outDebug",
+      "externalConsole": false,
+      "cwd": "/home/hhargrove/Documents/GitHub/Systems-Programming/Reading_And_Writing_Data",
+      "program": "/home/hhargrove/Documents/GitHub/Systems-Programming/Reading_And_Writing_Data/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
