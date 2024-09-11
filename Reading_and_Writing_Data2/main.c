@@ -23,9 +23,10 @@ int main(){
     //max size of nine integers can be read at a time
     const unsigned int bufferSize = 9*sizeof(double);
 
-    if(mkdir("/home/hhargrove/Documents/GitHub/Systems-Programming/Reading_and_Writing_Data2/values",S_IRWXG) != 0){
-        
+    if(mkdir("/home/hhargrove/Documents/GitHub/Systems-Programming/Reading_and_Writing_Data2/values",S_IRWXU) != 0){
+        printf("%s", "Dir exists continuing");
     }
+    else{printf("%s", "Created dir");}
     
     int fdR = checkError(open("data.dat",O_RDONLY, 0644),"Failed to open");
 
