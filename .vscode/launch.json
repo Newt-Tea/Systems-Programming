@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": false,
-      "cwd": "/home/hhargrove/Documents/GitHub/Systems-Programming/Reading_And_Writing_Data1",
-      "program": "/home/hhargrove/Documents/GitHub/Systems-Programming/Reading_And_Writing_Data1/build/Debug/outDebug",
+      "cwd": "/home/hhargrove/Documents/GitHub/Systems-Programming/Reading_and_Writing_Data2",
+      "program": "/home/hhargrove/Documents/GitHub/Systems-Programming/Reading_and_Writing_Data2/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
