@@ -20,9 +20,10 @@ int checkError (int val, const char *msg)
 
 
 int main(){
-    //max size of nine integers can be read at a time
+    //max size of nine doubles can be read at a time
     const unsigned int bufferSize = 9*sizeof(double);
-
+    //Create dir and files to write
+    
     if(mkdir("/home/hhargrove/Documents/GitHub/Systems-Programming/Reading_and_Writing_Data2/values",S_IRWXU) != 0){
         printf("%s", "Dir exists continuing");
     }
@@ -30,19 +31,18 @@ int main(){
     
     int fdR = checkError(open("data.dat",O_RDONLY, 0644),"Failed to open");
 
-    //Create dir and files to write
-    //checkError(mkdir(linkPath,S_I));
+
     int fdAccl = checkError(open("/home/hhargrove/Documents/GitHub/Systems-Programming/Reading_and_Writing_Data2/values/accl.dat", O_WRONLY | O_CREAT | O_TRUNC, 0644),"Failed to create/write to file");
     int fdAngl = checkError(open("/home/hhargrove/Documents/GitHub/Systems-Programming/Reading_and_Writing_Data2/values/angl.dat", O_WRONLY | O_CREAT | O_TRUNC, 0644),"Failed to create/write to file");
     int fdRota = checkError(open("/home/hhargrove/Documents/GitHub/Systems-Programming/Reading_and_Writing_Data2/values/rota.dat", O_WRONLY | O_CREAT | O_TRUNC, 0644),"Failed to create/write to file");
 
     //An array to store the three integers of each type
-    unsigned int buffer[bufferSize];
+    double buffer[9];
 
     int pos = 0;
-    int x;
-    int y;
-    int z;
+    double x;
+    double y;
+    double z;
 
 
     while(0 != checkError(read(fdR,buffer,bufferSize),"Failed to read")){
@@ -58,21 +58,21 @@ int main(){
 
 
             if(k==0){
-                write(fdAccl, &x);
-                write(fdAccl, &y);
-                write(fdAccl, &z);
+                write(fdAccl, &x,sizeof(double));
+                write(fdAccl, &y,sizeof(double));
+                write(fdAccl, &z,sizeof(double));
             }
 
             if(k==3){
-                write(fdAccl, &x);
-                write(fdAccl, &y);
-                write(fdAccl, &z);
+                write(fdAngl, &x,sizeof(double));
+                write(fdAngl, &y,sizeof(double));
+                write(fdAngl, &z,sizeof(double));
             }
 
             if(k==6){
-                write(fdAccl, &x);
-                write(fdAccl, &y);
-                write(fdAccl, &z);
+                write(fdRota, &x,sizeof(double));
+                write(fdRota, &y,sizeof(double));
+                write(fdRota, &z,sizeof(double));
             }
 
         }
