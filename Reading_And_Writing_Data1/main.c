@@ -65,7 +65,7 @@ int main(){
                 printf("%f", accell);
                 printf("%s","\n");
 
-                write(fdW,*accellPTR);
+                write(fdW,&accell,bufferSize);
             }
 
             if(k==4){
@@ -73,7 +73,7 @@ int main(){
                 printf("%f", accell);
                 printf("%s","\n");
 
-                write(fdW,*accellPTR);
+                write(fdW,&accell,bufferSize);
             }
 
             if(k==6){
@@ -81,7 +81,7 @@ int main(){
                 printf("%f", accell);
                 printf("%s","\n");
 
-                write(fdW,*accellPTR);
+                write(fdW,&accell,bufferSize);
             }
 
             if(k==8){
@@ -89,7 +89,7 @@ int main(){
                 printf("%f", angular);
                 printf("%s","\n");
 
-                write(fdW,*angularPTR);
+                write(fdW,&angular,bufferSize);
             }
 
             if(k==10){
@@ -97,7 +97,7 @@ int main(){
                 printf("%f", angular);
                 printf("%s","\n");
 
-                write(fdW,*angularPTR);
+                write(fdW,&angular,bufferSize);
             }
 
             if(k==12){
@@ -105,7 +105,7 @@ int main(){
                 printf("%f", angular);
                 printf("%s","\n");
 
-                write(fdW,*angularPTR);
+                write(fdW,&angular,bufferSize);
             }
 
             if(k==14){
@@ -113,7 +113,7 @@ int main(){
                 printf("%f", angle);
                 printf("%s","\n");
 
-                write(fdW,*anglePTR);
+                write(fdW,&angle,bufferSize);
             }
 
             if(k==16){
@@ -121,7 +121,7 @@ int main(){
                 printf("%f", angle);
                 printf("%s","\n");
 
-                write(fdW,*anglePTR);
+                write(fdW,&angle,bufferSize);
             }
 
             if(k==18){
@@ -129,7 +129,7 @@ int main(){
                 printf("%f", angle);
                 printf("%s","\n");
 
-                write(fdW,*anglePTR);
+                write(fdW,&angle,bufferSize);
             }
         }
     }
