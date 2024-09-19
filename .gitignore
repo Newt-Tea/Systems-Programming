@@ -12,3 +12,4 @@ Reading_Values_at_regular_time_intervals/angl.dat
 Reading_Values_at_regular_time_intervals/main
 .vscode/settings.json
 .vscode/c_cpp_properties.json
+*.json
