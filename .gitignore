@@ -6,5 +6,7 @@ Reading_and_Writing_Data1/main/
 
 Reading_And_Writing_Data2/build/
 Reading_and_Writing_Data2/main/
-/Reading_And_Writing_Data1/build
-Reading_And_Writing_Data1/build/Debug/main.o
+
+Reading_Values_at_regular_time_intervals/build
+Reading_Values_at_regular_time_intervals/angl.dat
+Reading_Values_at_regular_time_intervals/main
