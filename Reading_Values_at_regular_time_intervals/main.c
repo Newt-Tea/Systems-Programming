@@ -20,54 +20,42 @@ int checkError (int val, const char *msg)
 
 
 int main(){
-    //max size of one doubles can be read at a time
-    const unsigned int bufferSize = 1*sizeof(double);
+    //max size of three doubles can be read at a time
+    const unsigned int bufferSize = 3*sizeof(double);
     //open files for reading
     
     int fdAngl = checkError(open("/home/hhargrove/Documents/GitHub/Systems-Programming/Reading_and_Writing_Data2/values/angl.dat", O_RDONLY, 0644),"Failed to read file");
     int fdRota = checkError(open("/home/hhargrove/Documents/GitHub/Systems-Programming/Reading_and_Writing_Data2/values/rota.dat", O_RDONLY, 0644),"Failed to read file");
     int fdAccl = checkError(open("/home/hhargrove/Documents/GitHub/Systems-Programming/Reading_and_Writing_Data2/values/accl.dat", O_RDONLY, 0644),"Failed to read file");
 
-    //An array to store the double
-    double buffer[1];
+    //An array to store the three double
+    double buffer[3];
 
     int pos = 0;
-    double x;
-    double y;
-    double z;
+    double yaw = 0.0;
+    double pitch = 0.0;
+    double roll = 0.0;
+    int setCount = 1;
 
 
-    while((0 != checkError(read(fdAccl,buffer,bufferSize),"Failed to read")) && (0 != checkError(read(fdAngl,buffer,bufferSize),"Failed to read")) && 0 != checkError(read(fdRota,buffer,bufferSize),"Failed to read")){
+    while(0 != checkError(read(fdAngl,buffer,bufferSize),"Failed to read")){
 
-        // write new values to new file
-        for(int k = 0; k < 9; k+=3){
-            //total iteration value
+        // print the values of angl and wait a second after each information set
 
-            pos = k;
-            x = buffer[pos];
-            y = buffer [pos + 1];
-            z = buffer[pos + 2];
+            pos = 0;
+            roll = buffer[pos];
+            pitch = buffer [pos + 1];
+            yaw = buffer[pos + 2];
+
+            printf("%s","Data Set: ");
+            printf("%i", setCount);
+
+            if((roll >= -20.0) && (roll <= 20.0))
+                printf("\n%s","The Roll value is in range\n");
+            else{ printf("%s", "The Roll value is not in range\n");}
 
 
-            if(k==0){
-                write(fdAccl, &x,sizeof(double));
-                write(fdAccl, &y,sizeof(double));
-                write(fdAccl, &z,sizeof(double));
-            }
-
-            if(k==3){
-                write(fdAngl, &x,sizeof(double));
-                write(fdAngl, &y,sizeof(double));
-                write(fdAngl, &z,sizeof(double));
-            }
-
-            if(k==6){
-                write(fdRota, &x,sizeof(double));
-                write(fdRota, &y,sizeof(double));
-                write(fdRota, &z,sizeof(double));
-            }
-
-        }
+        setCount += 1;
     }
     close(fdAccl);
     close(fdAngl);
