@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "c:/Users/hudso_oe92y11/OneDrive/Documents/GitHub/Systems-Programming/Reading_Values_at_regular_time_intervals",
-      "program": "c:/Users/hudso_oe92y11/OneDrive/Documents/GitHub/Systems-Programming/Reading_Values_at_regular_time_intervals/build/Debug/outDebug",
+      "cwd": "c:/Users/hudso_oe92y11/OneDrive/Documents/GitHub/Systems-Programming/A_Timed_Quiz",
+      "program": "c:/Users/hudso_oe92y11/OneDrive/Documents/GitHub/Systems-Programming/A_Timed_Quiz/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
