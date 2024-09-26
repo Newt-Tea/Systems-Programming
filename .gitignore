@@ -14,3 +14,6 @@ Reading_Values_at_regular_time_intervals/main
 *.json
 .vscode/c_cpp_properties.json
 .vscode/launch.json
+/A_Timed_Quiz/build
+/.vscode
+A_Timed_Quiz/a
