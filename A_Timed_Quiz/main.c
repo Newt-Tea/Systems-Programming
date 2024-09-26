@@ -163,7 +163,8 @@ int main(){
     if (exitConfirmed) {
       while(exitConfirmed){
         //Cancel Timer
-        it.it_value.tv_sec = 0; // Initial timer value
+        it.it_value.tv_sec = 0;
+        it.it_value.tv_usec = 0;
         checkError(setitimer(ITIMER_REAL, &it, NULL), "Failed to set timer");
         //Confirm exit with user
         char confirm;
@@ -174,7 +175,7 @@ int main(){
         } 
         else {
           //Reset timer
-          it.it_value.tv_sec = 15; // Initial timer value
+          it.it_value.tv_sec = 15;
           checkError(setitimer(ITIMER_REAL, &it, NULL), "Failed to set timer");
           printf("Question %d: %s", qNum, bufQ); // Restart the question if they choose not to exit
           exitConfirmed = 0;
@@ -220,9 +221,6 @@ int main(){
     printf("You got %d answers wrong.\n", wrong);
     printf("You got %.2f %% correct.", percentage);
   }
-
-  
-
 
   close(fdQ);
   close(fdA);
