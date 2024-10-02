@@ -17,3 +17,5 @@ Reading_Values_at_regular_time_intervals/main
 /A_Timed_Quiz/build
 /.vscode
 A_Timed_Quiz/a
+
+build/
