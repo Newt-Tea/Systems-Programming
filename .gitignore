@@ -8,7 +8,6 @@ Reading_And_Writing_Data2/build/
 Reading_and_Writing_Data2/main/
 
 Reading_Values_at_regular_time_intervals/build
-Reading_Values_at_regular_time_intervals/angl.dat
 Reading_Values_at_regular_time_intervals/main
 
 *.json
@@ -19,3 +18,8 @@ Reading_Values_at_regular_time_intervals/main
 A_Timed_Quiz/a
 
 build/
+Handling_Child_Signals/a
+*.o
+
+*/tempCodeRunnerFile.c
+
