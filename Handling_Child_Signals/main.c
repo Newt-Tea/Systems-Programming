@@ -1,4 +1,5 @@
-#define _POSIX_C_SOURCE 1 // Needed for SIG_BLOCK
+#define _POSIX_SOURCE  // Needed for SIG_BLOCK
+#define _POSIX_C_SOURCE 199309
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
@@ -19,7 +20,7 @@ int checkError(int val, const char *msg) {
     return val;
 }
 
-// Signal handlers for parent
+// Signal handlers for SIGCHLD
 void sigchld_handler(int sig) {
     if (sig == SIGCHLD) {
         int status;
@@ -30,7 +31,7 @@ void sigchld_handler(int sig) {
         }
     }
 }
-
+//Signal handler for SIGINT
 void sigint_handler(int sig) {
     if (sig == SIGINT) {
         char response;
@@ -42,19 +43,18 @@ void sigint_handler(int sig) {
         }
     }
 }
-
+//Signal handler for SIGUSR1
 void sigusr1_handler(int sig) {
     if (sig == SIGUSR1) {
         printf("Warning! roll outside of bounds\n");
     }
 }
-
+//Signal handler for SIGUSR2
 void sigusr2_handler(int sig) {
     if (sig == SIGUSR2) {
         printf("Warning! pitch outside of bounds\n");
     }
 }
-
 // Signal handler for child termination
 void sigterm_handler(int sig) {
     if (sig == SIGTERM) {
@@ -62,9 +62,9 @@ void sigterm_handler(int sig) {
         exit(0);
     }
 }
-
-void child_process() {
-    // Block SIGINT in the child
+// Function for child instructions
+void child() {
+    // Block only SIGINT in the child
     sigset_t mask;
     sigemptyset(&mask);
     sigaddset(&mask, SIGINT);
@@ -77,13 +77,14 @@ void child_process() {
     sa.sa_flags = 0;
     checkError(sigaction(SIGTERM, &sa, NULL), "Failed to set SIGTERM handler");
 
-    // Open the file "angl.dat" to read
+    // Open angl.dat for reading values
     int fd = checkError(open("angl.dat", O_RDONLY), "Failed to open angl.dat");
 
-    double buf[3];  // Buffer to read roll, pitch, yaw triples
+    //Buffer to store the values read in
+    double buf[3];
 
     const struct timespec req = {1, 0};  // 1 second sleep
-    struct timespec rem;
+    struct timespec rem = {NULL, NULL};
 
     // Read triples (roll, pitch, yaw) from the file
     while (checkError(read(fd, buf, sizeof(buf)), "Failed to read angl.dat") > 0) {
@@ -108,21 +109,21 @@ void child_process() {
     exit(0); // Ensure the child process terminates after the file is processed
 }
 
-int main() {
-    pid_t childId;
 
-    // Fork a child processes
-        childId = fork();
-        pid_t pid;
-        pid = getpid();
+int main() {
+    pid_t childId[1];
+
+    // Fork two child processes
+
+        childId[0] = fork();
         
-        if (childId == -1) {  // Check if fork failed
+        if (childId[0] == -1) {  // Check if fork failed
             perror("fork");
             exit(EXIT_FAILURE);
         }
 
-        if (childId == 0) {  // Child process
-            child_process();
+        if (childId[0] == 0) {  // start the child process
+            child();
         }
 
     // Parent process
@@ -148,8 +149,18 @@ int main() {
 
     // Parent process: use waitpid in a loop to handle multiple children
     int status;
-    while (waitpid(-1, &status, 0) > 0) {
-        printf("Handled a child termination.\n");
+    pid_t pid;
+    while ((pid = waitpid(-1, &status, 0)) != -1 || errno == EINTR) {
+        if (errno == EINTR) {
+            // Restart waitpid if it was interrupted by a signal
+            errno = 0;
+            continue;
+        }
+
+        // Print a message when a child terminates
+        if (pid > 0) {
+            printf("Handled child process %d termination.\n", pid);
+        }
     }
 
     // Handle potential errors in waitpid
@@ -159,5 +170,6 @@ int main() {
     }
 
     printf("No more child processes to wait for. Exiting.\n");
+    exit(0);
     return 0;
 }
