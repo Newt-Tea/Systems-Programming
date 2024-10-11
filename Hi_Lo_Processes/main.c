@@ -8,14 +8,10 @@
 #include <sys/wait.h>
 #include <fcntl.h>
 
-#define MAX_GAMES 10
-#define GUESS_FILE1 "player1_guess.txt"
-#define GUESS_FILE2 "player2_guess.txt"
-
-volatile sig_atomic_t player1_ready = 0;
-volatile sig_atomic_t player2_ready = 0;
-volatile sig_atomic_t player1_win = 0;
-volatile sig_atomic_t player2_win = 0;
+sig_atomic_t player1_ready = 0;
+sig_atomic_t player2_ready = 0;
+sig_atomic_t player1_win = 0;
+sig_atomic_t player2_win = 0;
 pid_t player1_pid;
 pid_t player2_pid;
 
@@ -125,7 +121,7 @@ void player1_behavior() {
             kill(getppid(),SIGUSR1);
             int guess = (min + max) / 2;  // Player 1's strategy
             
-            write_guess_to_file(GUESS_FILE1, guess);
+            write_guess_to_file("player1_guess.txt", guess);
             sleep(1);  // Simulate thinking time
 
             kill(getppid(), SIGUSR1);  // Signal parent with guess
@@ -165,7 +161,7 @@ void player2_behavior() {
             kill(getppid(),SIGUSR2);
             int guess = rand() % (max - min) + min;  // Player 2's strategy
 
-            write_guess_to_file(GUESS_FILE2, guess);
+            write_guess_to_file("player2_guess.txt", guess);
             sleep(1);  // Simulate thinking time
 
             kill(getppid(), SIGUSR2);  // Signal parent with guess
@@ -194,7 +190,7 @@ int main() {
     setup_signal_handler(SIGUSR1, parent_handler);
     setup_signal_handler(SIGUSR2, parent_handler);
     // Game loop
-    for (int game_number = 1; game_number <= MAX_GAMES; game_number++) {
+    for (int game_number = 1; game_number <= 10; game_number++) {
         player1_pid = fork();
         if (player1_pid == 0) {
             player1_behavior();
@@ -225,14 +221,14 @@ int main() {
             pause();
 
             // Read guesses from files
-            int fd1 = open(GUESS_FILE1, O_RDONLY);
+            int fd1 = open("player1_guess.txt", O_RDONLY);
             char guess1_str[10];
             read(fd1, guess1_str, sizeof(guess1_str) - 1);
             close(fd1);
             guess1_str[9] = '\0';  // Ensure null termination
             int guess1 = atoi(guess1_str);
 
-            int fd2 = open(GUESS_FILE2, O_RDONLY);
+            int fd2 = open("player2_guess.txt", O_RDONLY);
             char guess2_str[10];
             read(fd2, guess2_str, sizeof(guess2_str) - 1);
             close(fd2);
