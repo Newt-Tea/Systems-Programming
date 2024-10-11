@@ -18,26 +18,41 @@ volatile sig_atomic_t player1_win = 0;
 volatile sig_atomic_t player2_win = 0;
 pid_t player1_pid;
 pid_t player2_pid;
-int bound = 0;
 
-void handle_sigusr1(int sig) {
-    player1_ready = 1;  // Player 1 is ready
-    bound = 1;
+int p1Bound;
+int p2Bound;
+
+
+void child1_handler(int sig){
+    if (sig == SIGUSR1){
+        p1Bound = 1;
+    }
+    else if (sig == SIGUSR2){
+        p1Bound = 2;
+    }
+    else if (sig == SIGINT){
+        p1Bound = 0;
+    }
+    else if (sig == SIGTERM){
+        exit(0);
+    }
 }
 
-void handle_sigusr2(int sig) {
-    player2_ready = 1;  // Player 2 is ready
-    bound = 2;
+void child2_handler(int sig){
+    if (sig == SIGUSR1){
+        p2Bound = 1;
+    }
+    else if (sig == SIGUSR2){
+        p2Bound = 2;
+    }
+    else if (sig == SIGINT){
+        p2Bound = 0;
+    }
+    else if (sig == SIGTERM){
+        exit(0);
+    }
 }
 
-void handle_sigchld(int sig) {
-    wait(NULL);  // Reap child processes
-}
-
-void handle_sigint(int sig) {
-    kill(player1_pid, SIGTERM);  // Terminate Player 1
-    kill(player2_pid, SIGTERM);  // Terminate Player 2
-}
 
 void parent_handler(int sig){
     if (sig == SIGUSR1){
@@ -47,10 +62,15 @@ void parent_handler(int sig){
         player2_ready = 1;
     }
     else if(sig == SIGINT){
-
+        kill(player1_pid, SIGTERM);
+        kill(player2_pid, SIGTERM);
+        exit(0);
     }
-    else if(sig == SIGCHLD)
+    else if(sig == SIGCHLD){
+        wait(NULL); //Reaper
+    }
 }
+
 void setup_signal_handler(int signum, void (*handler)(int)) {
     struct sigaction sa;
     memset(&sa, 0, sizeof(sa));
@@ -90,9 +110,10 @@ void write_guess_to_file(const char* filename, int guess) {
 }
 
 void player1_behavior() {
-    setup_signal_handler(SIGUSR1, handle_sigusr1);
-    setup_signal_handler(SIGUSR2, handle_sigint);
-    setup_signal_handler(SIGINT, handle_sigint);
+    setup_signal_handler(SIGUSR1, child1_handler);
+    setup_signal_handler(SIGUSR2, child1_handler);
+    setup_signal_handler(SIGINT, child1_handler);
+    setup_signal_handler(SIGTERM, child1_handler);
 
     int min = 0, max = 101;
     while (1) {
@@ -111,16 +132,14 @@ void player1_behavior() {
 
             // Reset flags for handling signals
             player1_ready = 0;
-            setup_signal_handler(SIGUSR1, handle_sigusr1);
-            setup_signal_handler(SIGUSR2, handle_sigint);
 
             // Wait for parent's response
             pause();
 
             // Adjust bounds based on parent response
-            if (bound == 1) {
+            if (p1Bound == 1) {
                 min = guess;  // Low guess
-            } else if (bound == 2) {
+            } else if (p1Bound == 2) {
                 max = guess;  // High guess
             } else {
                 break;  // Parent signaled to move to next game
@@ -130,9 +149,10 @@ void player1_behavior() {
 }
 
 void player2_behavior() {
-    setup_signal_handler(SIGUSR1, handle_sigint);
-    setup_signal_handler(SIGUSR2, handle_sigusr2);
-    setup_signal_handler(SIGINT, handle_sigint);
+    setup_signal_handler(SIGUSR1, child2_handler);
+    setup_signal_handler(SIGUSR2, child2_handler);
+    setup_signal_handler(SIGINT, child2_handler);
+    setup_signal_handler(SIGTERM, child2_handler);
     srand(getpid());  // Seed RNG with process ID
 
     int min = 0, max = 101;
@@ -152,16 +172,14 @@ void player2_behavior() {
 
             // Reset flags for handling signals
             player2_ready = 0;
-            setup_signal_handler(SIGUSR1, handle_sigint);
-            setup_signal_handler(SIGUSR2, handle_sigusr2);
 
             // Wait for parent's response
             pause();
 
             // Adjust bounds based on parent response
-            if (bound == 1) {
+            if (p2Bound == 1) {
                 min = guess;  // Low guess
-            } else if (bound == 2) {
+            } else if (p2Bound == 2) {
                 max = guess;  // High guess
             } else {
                 break;  // Parent signaled to move to next game
@@ -171,28 +189,28 @@ void player2_behavior() {
 }
 
 int main() {
-    setup_signal_handler(SIGINT, handle_sigint);
-    setup_signal_handler(SIGCHLD, handle_sigchld);
-    setup_signal_handler(SIGUSR1, handle_sigusr1);
-    setup_signal_handler(SIGUSR2, handle_sigusr2);
-
-    player1_pid = fork();
-    if (player1_pid == 0) {
-        player1_behavior();
-    }
-
-    player2_pid = fork();
-    if (player2_pid == 0) {
-        player2_behavior();
-    }
-
-    // Parent (Referee) Logic
-    sleep(5);  // Wait for children to set up
-    kill(player1_pid, SIGUSR1);  // Signal Player 1 to start
-    kill(player2_pid, SIGUSR2);  // Signal Player 2 to start
-
+    setup_signal_handler(SIGINT, parent_handler);
+    setup_signal_handler(SIGCHLD, parent_handler);
+    setup_signal_handler(SIGUSR1, parent_handler);
+    setup_signal_handler(SIGUSR2, parent_handler);
     // Game loop
     for (int game_number = 1; game_number <= MAX_GAMES; game_number++) {
+        player1_pid = fork();
+        if (player1_pid == 0) {
+            player1_behavior();
+        }
+
+        player2_pid = fork();
+        if (player2_pid == 0) {
+            player2_behavior();
+        }
+
+        // Parent (Referee) Logic
+        sleep(5);  // Wait for children to set up
+        kill(player1_pid, SIGUSR1);  // Signal Player 1 to start
+        kill(player2_pid, SIGUSR2);  // Signal Player 2 to start
+
+    
         // Wait for players to signal they're ready
         while (!(player1_ready && player2_ready)) {
             pause();
@@ -220,8 +238,6 @@ int main() {
             close(fd2);
             guess2_str[9] = '\0';  // Ensure null termination
             int guess2 = atoi(guess2_str);
-
-            printf("Player 1 guesses: %d, Player 2 guesses: %d\n", guess1, guess2);
 
             if (guess1 == target) {
                 printf("Player 1 wins this game!\n");
