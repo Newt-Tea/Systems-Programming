@@ -26,3 +26,6 @@ Handling_Child_Signals/a
 Hi_Lo_Processes/a
 Hi_Lo_Processes/player1_guess.txt
 Hi_Lo_Processes/player2_guess.txt
+exit,exec, and wait/a
+exit,exec, and wait/main
+exit,exec, and wait/myRand
