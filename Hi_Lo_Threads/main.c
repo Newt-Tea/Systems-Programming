@@ -4,8 +4,6 @@
 #include <unistd.h>
 #include <time.h>
 
-#define NUM_GAMES 10
-
 // Global variables
 int guess[2];
 int cmp[2];
@@ -64,11 +62,11 @@ void* player2_behavior(void* arg) {
     while (1) {
         // Wait for the referee to signal readiness
         pthread_mutex_lock(&mtx[2]);
-        while (rdy[3] == 0) {
+        while (!rdy[3]) {
             pthread_cond_wait(&cnd[2], &mtx[2]);
         }
-        rdy[3] = 0;
         pthread_mutex_unlock(&mtx[2]);
+        rdy[3] = 0;
 
         // Guess loop
         while (1) {
@@ -103,52 +101,46 @@ void* player2_behavior(void* arg) {
 }
 
 void* referee_behavior(void* arg) {
-    for (int game_number = 1; game_number <= NUM_GAMES; game_number++) {
+    for (int game_number = 1; game_number <= 10; game_number++) {
+        pthread_mutex_lock(&mtx[2]);
         // Generate the target number
         int target = rand() % 100 + 1;
-
-        // Signal players to start
-        pthread_mutex_lock(&mtx[2]);
+    // Signal players to start
         rdy[2] = 1;
         rdy[3] = 1;
         pthread_cond_broadcast(&cnd[2]);
         pthread_mutex_unlock(&mtx[2]);
 
         printf("Game %d: Target Number = %d\n", game_number, target);
+        printf("Game %d: Player 1 wins: %d, Player 2 wins: %d\n", game_number, player1_win, player2_win);
 
         while (1) {
+            sleep(1);
             // Wait for Player 1's guess
             pthread_mutex_lock(&mtx[0]);
-            while (rdy[0] == 0) {
-                pthread_cond_wait(&cnd[0], &mtx[0]);
-            }
-            rdy[0] = 0;
-            pthread_mutex_unlock(&mtx[0]);
-
-            // Wait for Player 2's guess
             pthread_mutex_lock(&mtx[1]);
-            while (rdy[1] == 0) {
-                pthread_cond_wait(&cnd[1], &mtx[1]);
-            }
+
+            rdy[0] = 0;
             rdy[1] = 0;
-            pthread_mutex_unlock(&mtx[1]);
+            // while (rdy[0] == 0) {
+            //     pthread_cond_wait(&cnd[0], &mtx[0]);
+            // }
+            // rdy[0] = 0;
+            // pthread_mutex_unlock(&mtx[0]);
+
+            // // Wait for Player 2's guess
+            // while (rdy[1] == 0) {
+            //     pthread_cond_wait(&cnd[1], &mtx[1]);
+            // }
+            // rdy[1] = 0;
+            // pthread_mutex_unlock(&mtx[1]);
 
             // cmp guesses to the target
             cmp[0] = guess[0] - target;
             cmp[1] = guess[1] - target;
 
-            // Check for winners
-            if (cmp[0] == 0 || cmp[1] == 0) {
-                if (cmp[0] == 0) {
-                    printf("Player 1 wins this game!\n");
-                    player1_win++;
-                }
-                if (cmp[1] == 0) {
-                    printf("Player 2 wins this game!\n");
-                    player2_win++;
-                }
-                break;
-            }
+            rdy[0] = 1;
+            rdy[1] = 1;
 
             // Signal players with feedback
             pthread_mutex_lock(&mtx[0]);
@@ -158,9 +150,25 @@ void* referee_behavior(void* arg) {
             pthread_mutex_lock(&mtx[1]);
             pthread_cond_signal(&cnd[1]);
             pthread_mutex_unlock(&mtx[1]);
-        }
 
-        printf("Game %d: Player 1 wins: %d, Player 2 wins: %d\n", game_number, player1_win, player2_win);
+            // Check for winners
+            if (cmp[0] == 0 && cmp[1] == 0) {
+                printf("Both Players win this game!\n");
+                player1_win++;
+                player2_win++;
+            }
+            else if (cmp[0] == 0) {
+                    printf("Player 1 wins this game!\n");
+                    player1_win++;
+            }
+            else if (cmp[1] == 0) {
+                    printf("Player 2 wins this game!\n");
+                    player2_win++;
+            }
+            else{
+            break;
+            }
+        }
     }
     return NULL;
 }
