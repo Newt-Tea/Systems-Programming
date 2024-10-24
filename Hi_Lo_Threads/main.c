@@ -3,10 +3,9 @@
 #include <pthread.h>
 #include <unistd.h>
 
-// Global variables
-int guess[2];
-int cmp[2];
-int rdy[4];
+int guess[2]; //Player Guesses
+int cmp[2]; //Ref Responses
+int rdy[4]; // Readiness Flags
 pthread_mutex_t mtx[3];
 pthread_cond_t cnd[3];
 
